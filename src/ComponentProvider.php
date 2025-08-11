@@ -6,27 +6,24 @@ namespace OpenEf\Framework;
 
 use OpenEf\Container\Container;
 use OpenEf\Framework\Contract\ApplicationInterface;
-use OpenEf\Framework\Contract\ConfigInterface;
+use OpenEf\Framework\EventDispatcher\EventDispatcherFactory;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ComponentProvider
 {
 
-    public function __invoke(Container $container): void
+    public function __invoke(Container $container): array
     {
-        $container[ApplicationInterface::class] = function () {
-            return new Application();
-        };
-
-        $container->extend(ConfigInterface::class, fn(ConfigInterface $config) => $config->merge([
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                    'collectors' => [],
-                    'class_map' => [],
+        return [
+            'scan' => [
+                'paths' => [
+                    __DIR__,
+                ],
+                'dependencies' => [
+                    ApplicationInterface::class => ApplicationFactory::class,
+                    EventDispatcherInterface::class => EventDispatcherFactory::class,
                 ],
             ],
-        ]));
+        ];
     }
 }

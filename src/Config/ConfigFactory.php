@@ -1,19 +1,10 @@
 <?php
-/**
- * ConfigFactory.php
- * PHP version 7
- *
- * @package open-ef
- * @author  weijian.ye
- * @contact yeweijian@eyugame.com
- * @link    https://github.com/vzina
- */
 declare (strict_types=1);
 
 namespace OpenEf\Framework\Config;
 
 use Illuminate\Support\Arr;
-use OpenEf\Framework\Contract\ConfigInterface;
+use OpenEf\Container\Config\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -21,18 +12,22 @@ class ConfigFactory
 {
     public static function load(ContainerInterface $container): void
     {
+        if (! defined('BASE_PATH')) {
+            throw new \RuntimeException('Undefined constant: BASE_PATH');
+        }
+
         if (file_exists(BASE_PATH . '/.env')) {
             DotenvManager::load([BASE_PATH]);
         }
 
-        $container[ConfigInterface::class] = function () {
+        $container->extend(ConfigInterface::class, static function (ConfigInterface $sc) {
             $configPath = BASE_PATH . '/config';
             $config = self::readConfig($configPath . '/config.php');
             $autoloadConfig = self::readPaths([$configPath . '/autoload']);
             $merged = array_merge_recursive($config, ...$autoloadConfig);
 
-            return new Config($merged);
-        };
+            return $sc->merge($merged);
+        });
     }
 
     private static function readConfig(string $configPath): array

@@ -22,7 +22,10 @@
     },
     "require": {
         "php": ">=8.2",
+        "illuminate/collections": "^8.0",
+        "open-ef/container": "^1.0.x-dev",
         "symfony/console": "^5.4",
+        "symfony/event-dispatcher": "^6.4",
         "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
@@ -30,9 +33,6 @@
         "mockery/mockery": "^1.0",
         "phpstan/phpstan": "^1.0",
         "phpunit/phpunit": ">=7.0"
-    },
-    "suggest": {
-        "swow/swow": "Required to create swow components."
     },
     "minimum-stability": "dev",
     "config": {
